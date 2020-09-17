@@ -26,12 +26,17 @@ const close = (stream?: http2.Http2Stream): void => {
 const startHttp2Client = (
   options: ClientOptsInterface,
 ): Promise<http2.ClientHttp2Session> => {
+  // wrapping in Promise to wait connection
   return new Promise<http2.ClientHttp2Session>((resolve, reject) => {
     try {
+      // making separate high order 'start' function and set it to global variable _startClient
+      // to have ability to call _startClient everywhere and start client without passing options arg
       const start = ({ uri }: ClientOptsInterface) => () => {
+        // http2.connect opens and return socket (http2 session) inside this session you can open streams
         _client = http2.connect(uri, (session) => {
           resolve(session);
         });
+        // add base listeners
         _client.on('error', _clientOnError);
         _client.on('timeout', _clientOnTimeout);
       };
@@ -53,7 +58,7 @@ const _sendRequest = (
   return _client.request({ ':path': path }, options);
 };
 
-const openSession = (
+const openStream = (
   path = '/',
   options?: http2.ClientSessionRequestOptions,
 ): ClientStreamInterface => {
@@ -136,7 +141,7 @@ const pingServer = (
 };
 
 export {
-  openSession,
+  openStream,
   startHttp2Client,
   read,
   write,
