@@ -1,7 +1,8 @@
-import { Http2Stream, ServerHttp2Stream } from 'http2';
+import { Http2Stream } from 'http2';
 import { Readable } from 'stream';
 
-const _isStreamAlive = (stream: Http2Stream): boolean => {
+// util function to check if stream is alive
+const isStreamAlive = (stream: Http2Stream): boolean => {
   return !(stream.destroyed || stream.closed || stream.aborted);
 };
 
@@ -14,33 +15,22 @@ const stopStream = (stream: Http2Stream): void => {
 const write = (stream: Http2Stream) => (
   data: Record<any, any> | string,
 ): void => {
-  if (_isStreamAlive(stream)) {
+  if (isStreamAlive(stream)) {
+    // converting data to json and transform it to readable stream
     const dataStringified = JSON.stringify(data);
     const dataToSendStream = Readable.from(dataStringified);
+    // using pipe to provide backpressure
     dataToSendStream.pipe(stream);
   }
 };
-
-const pushStream = (stream: ServerHttp2Stream) => (
-  data: string | Record<any, any>,
-  path = '/',
-): void => {
-  if (_isStreamAlive(stream)) {
-    stream.pushStream({ ':path': path }, (err, pushStream, headers) => {
-      if (err) {
-        throw err;
-      }
-      write(pushStream)(data);
-    });
-  }
-};
-
+// method receives stream to read and returns function that receives callback where data from stream will be passed
 const read = (stream: Http2Stream) => (
   onDataCallback: (data: Record<string, any>) => void,
 ): void => {
-  if (_isStreamAlive(stream)) {
+  if (isStreamAlive(stream)) {
     stream.setEncoding('utf8');
     let data = '';
+// setting listeners for 'data' and 'end' events. On the end we are passing parsed data to callback
     stream.on('data', (chunk) => {
       const parsedChunk = chunk instanceof Buffer ? chunk.toString() : chunk;
       data += parsedChunk;
@@ -55,4 +45,4 @@ const read = (stream: Http2Stream) => (
   }
 };
 
-export { write, read, stopStream, pushStream };
+export { write, read, stopStream, isStreamAlive };

@@ -1,6 +1,6 @@
 import * as http2 from 'http2';
 import { ServerOptsInterface } from './server.interface';
-import { pushStream, read, stopStream, write } from '../base/base.service';
+import { isStreamAlive, read, stopStream, write } from '../base/base.service';
 import { ServerStreamInterface } from '../base/base.interface';
 const { HTTP2_HEADER_PATH } = http2.constants;
 
@@ -27,6 +27,20 @@ const startHttp2Server = ({ port }: ServerOptsInterface): http2.Http2Server => {
     return _server;
   } catch (e) {
     console.log(e);
+  }
+};
+
+const pushStream = (stream: http2.ServerHttp2Strea) => (
+  data: string | Record<any, any>,
+  path = '/',
+): void => {
+  if (isStreamAlive(stream)) {
+    stream.pushStream({ ':path': path }, (err, pushStream, headers) => {
+      if (err) {
+        throw err;
+      }
+      write(pushStream)(data);
+    });
   }
 };
 

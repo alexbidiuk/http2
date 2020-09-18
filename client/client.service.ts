@@ -50,11 +50,13 @@ const startHttp2Client = (
 
 const _sendRequest = (
   path = '/',
-  options: http2.ClientSessionRequestOptions = { endStream: false },
+  options: http2.ClientSessionRequestOptions,
 ): http2.ClientHttp2Stream => {
   if (_client.destroyed || _client.closed) {
     _startClient();
   }
+  // opens a stream with a given path.
+  // This path will be accessible when server will receive stream on 'onStream' event, so we will have ability to distinguish incoming streams
   return _client.request({ ':path': path }, options);
 };
 
