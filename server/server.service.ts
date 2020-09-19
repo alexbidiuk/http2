@@ -19,6 +19,7 @@ const close = (stream?: http2.Http2Stream): void => {
   }
 };
 
+// starts and returns http2 server instance
 const startHttp2Server = ({ port }: ServerOptsInterface): http2.Http2Server => {
   try {
     _server = http2.createServer();
@@ -30,7 +31,7 @@ const startHttp2Server = ({ port }: ServerOptsInterface): http2.Http2Server => {
   }
 };
 
-const pushStream = (stream: http2.ServerHttp2Strea) => (
+const pushStream = (stream: http2.ServerHttp2Stream) => (
   data: string | Record<any, any>,
   path = '/',
 ): void => {
@@ -44,19 +45,23 @@ const pushStream = (stream: http2.ServerHttp2Strea) => (
   }
 };
 
+// accepts callback that will receive incoming stream with a custom wrapper
 const onStream = (
   onRequestCallback: (stream: ServerStreamInterface) => void,
 ): void => {
+  // start listening for incoming streams, callback receives incoming stream instance and it's headers
   _server.on(
     'stream',
     (
       stream: http2.ServerHttp2Stream,
       requestHeaders: http2.IncomingHttpHeaders,
     ) => {
+      // retrieving stream's path
       const streamPath = requestHeaders[HTTP2_HEADER_PATH] as string;
       stream.on('error', (err) => {
         console.log(`Stream with path: ${streamPath} error: \n`, err);
       });
+      // passing wrapper to callback with original stream, path, and wrapping write and read functions
       onRequestCallback({
         _stream: stream,
         write: write(stream),

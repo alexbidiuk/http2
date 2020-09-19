@@ -50,7 +50,7 @@ const startHttp2Client = (
 
 const _sendRequest = (
   path = '/',
-  options: http2.ClientSessionRequestOptions,
+  options: http2.ClientSessionRequestOptions = { endStream: false },
 ): http2.ClientHttp2Stream => {
   if (_client.destroyed || _client.closed) {
     _startClient();

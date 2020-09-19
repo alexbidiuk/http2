@@ -37,7 +37,9 @@ const read = (stream: Http2Stream) => (
     });
     stream.on('end', () => {
       try {
-        onDataCallback(JSON.parse(data));
+        if (data && data.length) {
+          onDataCallback(JSON.parse(data));
+        }
       } catch (e) {
         console.log('BASE HTTP2 SERVICE', e);
       }

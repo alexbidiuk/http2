@@ -1,0 +1,86 @@
+module.exports = {
+  env: {
+    es6: true,
+    node: true,
+  },
+  extends: [
+    'plugin:@typescript-eslint/recommended', // Uses the recommended rules from the @typescript-eslint/eslint-plugin
+    'prettier/@typescript-eslint', // Uses eslint-config-prettier to disable ESLint rules from @typescript-eslint/eslint-plugin that would conflict with prettier
+    'plugin:prettier/recommended',
+  ],
+  globals: {
+    Atomics: 'readonly',
+    SharedArrayBuffer: 'readonly',
+  },
+  parser: '@typescript-eslint/parser',
+  parserOptions: {
+    ecmaVersion: 2020,
+    sourceType: 'module',
+  },
+  plugins: ['@typescript-eslint', 'prettier'],
+  rules: {
+    'prettier/prettier': 'error',
+    '@typescript-eslint/class-name-casing': 'error',
+    '@typescript-eslint/indent': 'off',
+    '@typescript-eslint/member-delimiter-style': [
+      'off',
+      {
+        multiline: {
+          delimiter: 'none',
+          requireLast: true,
+        },
+        singleline: {
+          delimiter: 'semi',
+          requireLast: false,
+        },
+      },
+    ],
+    '@typescript-eslint/no-var-requires': 'off',
+    '@typescript-eslint/no-this-alias': 'error',
+    '@typescript-eslint/quotes': 'off',
+    '@typescript-eslint/semi': ['off', null],
+    '@typescript-eslint/space-within-parens': ['off', 'never'],
+    '@typescript-eslint/type-annotation-spacing': 'off',
+    'arrow-parens': ['off', 'as-needed'],
+    'comma-dangle': 'off',
+    curly: 'error',
+    'eol-last': 'off',
+    eqeqeq: ['error', 'smart'],
+    'id-blacklist': [
+      'error',
+      'any',
+      'number',
+      'string',
+      'boolean',
+      'Undefined',
+    ],
+    'id-match': 'error',
+    'import/no-extraneous-dependencies': 'off',
+    'linebreak-style': 'off',
+    'max-len': [
+      'error',
+      {
+        code: 120,
+      },
+    ],
+    'new-parens': 'off',
+    'newline-per-chained-call': 'off',
+    'no-duplicate-imports': 'error',
+    'no-eval': 'error',
+    'no-extra-semi': 'off',
+    'no-irregular-whitespace': 'off',
+    'no-multiple-empty-lines': 'off',
+    'no-new-wrappers': 'error',
+    'no-trailing-spaces': 'off',
+    'no-underscore-dangle': 'off',
+    'no-var': 'error',
+    'object-shorthand': 'error',
+    'one-var': ['error', 'never'],
+    'prefer-const': 'error',
+    'prefer-template': 'error',
+    'quote-props': 'off',
+    radix: 'error',
+    'space-before-function-paren': 'off',
+    'spaced-comment': 'error',
+  },
+};
